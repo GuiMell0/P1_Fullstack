@@ -1,0 +1,51 @@
+services:
+  app:
+    build: .
+    container_name: node_fullstack
+    ports:
+      - "3000:3000"
+    environment:
+      MONGO_URI: mongodb://mongodb:27017/fullstack
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: loja_de_carros
+    depends_on:
+      mysql:
+        condition: service_started
+      mongodb:
+        condition: service_started
+    networks:
+      - fullstack-network
+
+  mongodb:
+    image: mongo:7
+    container_name: mongo_fullstack
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - fullstack-network
+
+  mysql:
+    image: mysql:8
+    container_name: mysql_fullstack
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: loja_de_carros
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - fullstack-network
+
+networks:
+  fullstack-network:
+    driver: bridge
+
+volumes:
+  mongo_data:
+  mysql_data:
